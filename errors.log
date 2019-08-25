@@ -1,0 +1,4 @@
+{'time': '25.08.19 17:17:51', 'error': 'Ошибка при обработке подписки test-regions-organizers', 'stackTrace': "'keywords'"}
+{'time': '25.08.19 17:18:11', 'error': 'Ошибка при обработке подписки test', 'stackTrace': "local variable 'max_price' referenced before assignment"}
+{'time': '25.08.19 17:19:15', 'error': 'Ошибка при обработке подписки test-regions-organizers', 'stackTrace': "'keywords'"}
+{'time': '25.08.19 17:19:32', 'error': 'Ошибка при обработке подписки test', 'stackTrace': "'keywords'"}

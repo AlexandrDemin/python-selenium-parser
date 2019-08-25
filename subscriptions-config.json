@@ -1,0 +1,31 @@
+[
+	{
+		"name": "test",
+		"email": ["test@gmail.com"],
+		"subscriptions": [
+			{
+				"name": "test-regions-organizers",
+				"website": "fabrikant",
+				"filter": {
+					"daysBackPublished": 100,
+					"keywords": ["*"],
+					"organizerOrCustomer": {
+						"name": "глонасс",
+						"type": "organizer"
+					}
+				}
+			},
+			{
+				"name": "test",
+				"website": "fabrikant",
+				"filter": {
+					"daysBackPublished": 100,
+					"maxPrice": 2000000000,
+					"keywords": ["*"],
+					"regions": ["r137"],
+					"tenderTypes": [1, 2, 3, 4, 5, 6]
+				}
+			}
+		]
+	}
+]
