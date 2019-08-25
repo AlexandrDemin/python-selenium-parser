@@ -4,26 +4,26 @@
 		"email": ["test@gmail.com"],
 		"subscriptions": [
 			{
-				"name": "test-regions-organizers",
+				"name": "test-b2b-center",
+				"website": "b2b-center",
+				"filter": {
+					"daysBackPublished": 100,
+					"maxPrice": 2000000000,
+					"keywords": ["*"],
+					"regions": ["643_50"],
+					"tenderTypes": [1, 2, 14, 16, 20]
+				}
+			},
+			{
+				"name": "test-fabrikant",
 				"website": "fabrikant",
 				"filter": {
 					"daysBackPublished": 100,
 					"keywords": ["*"],
 					"organizerOrCustomer": {
-						"name": "глонасс",
-						"type": "organizer"
+						"name": "test",
+						"type": "customer"
 					}
-				}
-			},
-			{
-				"name": "test",
-				"website": "fabrikant",
-				"filter": {
-					"daysBackPublished": 100,
-					"maxPrice": 2000000000,
-					"keywords": ["*"],
-					"regions": ["r137"],
-					"tenderTypes": [1, 2, 3, 4, 5, 6]
 				}
 			}
 		]

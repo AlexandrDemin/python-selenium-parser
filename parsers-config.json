@@ -477,11 +477,145 @@
     },
     "b2b-center": {
         "url": "https://www.b2b-center.ru/market/",
-        "locators": {},
+        "locators": {
+            "LAST_PAGE": {
+                "by": "css selector",
+                "selector": ".pagi-list .pagi-item:last-child"
+            },
+            "ITEM": {
+                "by": "css selector",
+                "selector": "table.search-results tbody tr"
+            },
+            "ITEM_LINK": {
+                "by": "css selector",
+                "selector": "a.search-results-title"
+            },
+            "ITEM_DESCRIPTION": {
+                "by": "css selector",
+                "selector": ".search-results-title-desc"
+            },
+            "ITEM_ORGANIZER": {
+                "by": "css selector",
+                "selector": "td:nth-child(2)"
+            },
+            "COOKIE_BUTTON": {
+                "by": "css selector",
+                "selector": ".cookie_message .btn.btn-primary"
+            },
+            "CAPTCHA": {
+                "by": "css selector",
+                "selector": "#page > div.inner"
+            }
+        },
         "values": {
-        	"URL_TEMPLATE": "https://www.b2b-center.ru/market/?trade=all&{regions}&f_keyword={query}&searching=1&company_type=1&customer_id={customer}&price_start={minPrice}&price_end={maxPrice}&price_currency=0&date=1&date_start_dmy={dateStart}&date_end_dmy={dateEnd}&submit_filters=Применить фильтры#search-result",
-        	"SCRIPT": "function getData() {$.ajax({url : '/api/search/organizations/?action=SearchCustomer&query=test',type : 'GET',async: false,success : function(data) {oranizations = JSON.parse(data);},error: function() {connectionError();}});return oranizations['data'][0]['value']};var oranizations = [];getData();",
-        	"REGIONS_PARAM_TEMPLATE": "map_country[0]={region}",
+        	"URL_WITH_FILTERS": "https://www.b2b-center.ru/market/?",
+            "URL_PARAMS": {
+                "trade": "buy",
+                "f_keyword": "*",
+                "searching": "1",
+                "price_start": "0",
+                "price_end": "999999999",
+                "price_currency": "0",
+                "date": "1",
+                "date_start_dmy": "02.08.2019",
+                "date_end_dmy": "04.08.2019",
+                "lot_type": "0"
+            },
+        	"ORGANIZER": "SearchOrganizer",
+            "CUSTOMER": "SearchCustomer",
+            "ORGANIZER_PARAMS": {
+                "id": "firm_id",
+                "companyType": 2
+            },
+            "CUSTOMER_PARAMS": {
+                "id": "customer_id",
+                "companyType": 1
+            },
+            "SCRIPT": "function getData() {{$.ajax({{url : '/api/search/organizations/?action={}&query={}',type : 'GET',async: false,success : function(data) {{oranizations = JSON.parse(data);}}}});return oranizations['data'][0]['value']}};var oranizations = [];return getData();",
+            "REGIONS_PARAM_NAME": "map_country[{}]",
+            "TYPES": [
+                {
+                    "id": "0",
+                    "name": "Все типы закупок"
+                },
+                {
+                    "id": "2",
+                    "name": "Аукцион покупателя"
+                },
+                {
+                    "id": "2_5",
+                    "name": "Редукцион покупателя"
+                },
+                {
+                    "id": "4",
+                    "name": "Запрос цен/предложений"
+                },
+                {
+                    "id": "4_6",
+                    "name": "Запрос котировок"
+                },
+                {
+                    "id": "14",
+                    "name": "Простая процедура закупки"
+                },
+                {
+                    "id": "16",
+                    "name": "Предварительный квалификационный отбор"
+                },
+                {
+                    "id": "20",
+                    "name": "Конкурс"
+                },
+                {
+                    "id": "52",
+                    "name": "Закрытые конкурентные переговоры"
+                },
+                {
+                    "id": "53",
+                    "name": "Открытые конкурентные переговоры"
+                },
+                {
+                    "id": "22",
+                    "name": "Быстрая закупка"
+                },
+                {
+                    "id": "42",
+                    "name": "Закупка у единственного поставщика"
+                },
+                {
+                    "id": "421",
+                    "name": "Конкурс для МСП"
+                },
+                {
+                    "id": "423",
+                    "name": "Аукцион для МСП"
+                },
+                {
+                    "id": "425",
+                    "name": "Запрос котировок для МСП"
+                },
+                {
+                    "id": "427",
+                    "name": "Запрос предложений МСП"
+                },
+                {
+                    "id": "431",
+                    "name": "Открытый конкурс для недропользователей"
+                },
+                {
+                    "id": "433",
+                    "name": "Открытый конкурс на понижение (электронные торги) для недропользователей"
+                },
+                {
+                    "id": "435",
+                    "name": "Закупка из одного источника для недропользователей"
+                },
+                {
+                    "id": "436",
+                    "name": "Закупка"
+                }
+
+            ],
             "REGIONS": [
                 {
                     "id": "643",
