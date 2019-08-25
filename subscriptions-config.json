@@ -2,6 +2,7 @@
 	{
 		"name": "test",
 		"email": ["test@gmail.com"],
+		"guid": "some_guid",
 		"subscriptions": [
 			{
 				"name": "test-b2b-center",
@@ -20,10 +21,7 @@
 				"filter": {
 					"daysBackPublished": 100,
 					"keywords": ["*"],
-					"organizerOrCustomer": {
-						"name": "test",
-						"type": "customer"
-					}
+					"regions": ["r137"]
 				}
 			}
 		]

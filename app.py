@@ -26,7 +26,7 @@ for user in subscriptions_config:
                 'message': f"Спарсили {len(data)} элементов по подписке {subscription['name']}"
             })
             if len(data):
-                html_content = generateHtml(data, subscription, parser_config.get("values").get("TYPES"))
+                html_content = generateHtml(data, subscription, parser_config.get("values").get("TYPES"), user['guid'])
                 sendEmail(user['email'], subscription['name'], html_content)
         except Exception as e:
             writeLog({

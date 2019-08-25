@@ -75,7 +75,7 @@ def readConfigs(parser_config_path, subscriptions_config_path):
     return parser_config, subscriptions_config
 
 # Подготовка контента для письма
-def generateHtml(data, subscription, tender_types_enum):
+def generateHtml(data, subscription, tender_types_enum, guid):
     fltr = subscription['filter']
     html = f'<p>Выборка по фильтру {subscription["name"]}:<p>'
     html += '<ul>'
@@ -145,6 +145,7 @@ def generateHtml(data, subscription, tender_types_enum):
                     {type_header}
                     {organizer_header}
                     {customer_header}
+                    <th>Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -164,6 +165,7 @@ def generateHtml(data, subscription, tender_types_enum):
                 {typ}
                 {organizer}
                 {customer}
+                <td><a href="http://smartchein.ru/bots/pyhello.php?user={guid}">Отслеживать</a></td>
             </tr>
         '''
     html += '</tbody></table>'
