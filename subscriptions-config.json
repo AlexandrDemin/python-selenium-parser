@@ -19,7 +19,8 @@
 				"website": "roseltorg",
 				"filter": {
 					"daysBackPublished": 100,
-					"keywords": ["электр*"]
+					"keywords": ["электр*"],
+					"tenderTypes": [0, 1, 3, 4, 5]
 				}
 			}
 		]
