@@ -5,23 +5,21 @@
 		"guid": "some_guid",
 		"subscriptions": [
 			{
-				"name": "test-b2b-center",
-				"website": "b2b-center",
+				"name": "roseltorg-test-1",
+				"website": "roseltorg",
 				"filter": {
 					"daysBackPublished": 100,
 					"maxPrice": 2000000000,
 					"keywords": ["*"],
-					"regions": ["643_50"],
-					"tenderTypes": [1, 2, 14, 16, 20]
+					"tenderTypes": [0, 1, 2, 3]
 				}
 			},
 			{
-				"name": "test-fabrikant",
-				"website": "fabrikant",
+				"name": "roseltorg-test-2",
+				"website": "roseltorg",
 				"filter": {
 					"daysBackPublished": 100,
-					"keywords": ["*"],
-					"regions": ["r137"]
+					"keywords": ["электр*"]
 				}
 			}
 		]

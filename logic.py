@@ -13,13 +13,18 @@ import urllib.parse as urllib
 from datetime import datetime, timedelta
 import sys
 import time
+from bs4 import BeautifulSoup
 
 # Получение формата даты
-def getDateFormat(with_time = False):
-    if with_time:
-        return '%d.%m.%y %H:%M:%S'
+def getDateFormat(with_time = False, short_year = False):
+    format = '%d.%m.'
+    if short_year:
+        format += '%y'
     else:
-        return '%d.%m.%Y'
+        format += '%Y'
+    if with_time:
+        format += ' %H:%M:%S'
+    return format
 
 # Очистка старых логов
 def discardOldLogs(max_log_length):
@@ -169,9 +174,6 @@ def generateHtml(data, subscription, tender_types_enum, guid):
             </tr>
         '''
     html += '</tbody></table>'
-    with codecs.open('email.html', 'a', encoding='utf-8') as f:
-        f.write(html)
-        f.write('\n')
     return html
     
 # Отправка письма с результатом
@@ -184,6 +186,9 @@ def sendEmail(to, subject, html):
     msg['To'] = to
     html = html
     msg.attach(MIMEText(html, 'html'))
+    with codecs.open('email.html', 'a', encoding='utf-8') as f:
+        f.write(html)
+        f.write('\n')
     # server = smtplib.SMTP(HOST,587)
     # server.login('info@smartchein.ru','scinfo_76589')
     # server.sendmail(fro, to, msg.as_string())
@@ -290,10 +295,6 @@ def parseFabrikant(config, fltr, driver, subscription):
                 page_num += 1
     return data
 
-# Парсинг roseltorg.ru
-def parseRoseltorg(config, fltr, driver, subscription):
-    driver.get(config['url'])
-
 # Парсинг b2b-center.ru
 def parseB2bCenter(config, fltr, driver, subscription):
     # Заходим на основной урл, чтобы получить куки и сессию
@@ -394,6 +395,90 @@ def parseB2bCenter(config, fltr, driver, subscription):
                     time.sleep(3+page_num/20)
     return data
 
+# Парсинг roseltorg.ru
+def parseRoseltorg(config, fltr, driver, subscription):
+    # Заходим на основной урл, чтобы получить куки и сессию
+    driver.get(config['url'])
+
+    # Открываем расширенный поиск
+    advanced_search_btn = driver.find_element(config['locators']['ADVANCED_SEARCH']['by'], config['locators']['ADVANCED_SEARCH']['selector'])
+    advanced_search_btn.click()
+
+    # Закрываем виджет
+    try:
+        advanced_search_btn = driver.find_element(config['locators']['CLOSE_WIDGET']['by'], config['locators']['CLOSE_WIDGET']['selector'])
+        advanced_search_btn.click()
+    except:
+        pass
+    
+    # Выставляем фильтры
+    data = []
+    script = config['values']['SCRIPT']
+    base_url = config['values']['URL_WITH_FILTERS']
+    url_params = config['values']['URL_PARAMS']
+    type_param = config['values']['TYPE_PARAM']
+    region_param = config['values']['REGION_PARAM']
+    status_params = config['values']['STATUS_PARAMS']
+    host_url = config['values']['HOST_URL']
+    region_params = ''
+    type_params = ''
+    if fltr.get('maxPrice') and fltr.get('minPrice') and  fltr.get('maxPrice') < fltr.get('minPrice'):
+        writeLog({'time': datetime.now().strftime(getDateFormat(True)), 'error': f'Минимальная цена {fltr.get("minPrice")} больше максимальной {fltr.get("maxPrice")} по подписке {subscription["name"]}'}, True)
+        return []
+    if fltr.get('minPrice') and fltr.get('minPrice') > 0:
+        url_params['start_price'] = fltr.get('minPrice')
+    if fltr.get('maxPrice') and fltr.get('maxPrice') > 0:
+        url_params['end_price'] = fltr.get('maxPrice')
+    if fltr.get('daysBackPublished') and fltr.get('daysBackPublished') > 0:
+        date_from = (datetime.today() - timedelta(days=fltr.get('daysBackPublished'))).strftime(getDateFormat(with_time = False, short_year = True))
+        date_to = datetime.today().strftime(getDateFormat(with_time = False, short_year = True))
+        url_params['start_date_published'] = date_from
+        url_params['end_date_published'] = date_to
+    if fltr.get('regions') and len(fltr.get('regions')) > 0:
+        region_params_arr = []
+        for region in fltr.get('regions'):
+            region_params_arr.append((region_param, str(region)))
+        region_params = '&' + urllib.urlencode(region_params_arr)
+    if fltr.get('tenderTypes') and len(fltr.get('tenderTypes')) > 0:
+        type_params_arr = []
+        for t_type in fltr.get('tenderTypes'):
+            type_params_arr.append((type_param, str(t_type)))
+        type_params = '&' + urllib.urlencode(type_params_arr)
+    if fltr.get('organizerOrCustomer') and fltr.get('organizerOrCustomer').get('name') and len(fltr.get('organizerOrCustomer')['name']) > 0:
+        url_params['customer'] = fltr.get('organizerOrCustomer')['name']
+    
+    # Перебираем кейворды, парсим каждый, сохраняем информацию в общий массив
+    for keyword in fltr.get('keywords'):
+        from_count = 0
+        while True:
+            url_params['from'] = from_count
+            url_params['query_field'] = keyword
+            url = base_url + urllib.urlencode(url_params) + region_params + type_params + status_params
+            html = driver.execute_script(script.format(url))
+            soup = BeautifulSoup(html, 'html.parser')
+            items = soup.select(config['locators']['ITEM']['selector'])
+            if len(items) > 0:
+                for item in items:
+                    number = item.select(config['locators']['ITEM_NUMBER']['selector'])[0].text.strip()
+                    type_str = item.select(config['locators']['ITEM_TYPE']['selector'])[0].text.strip()
+                    link_text = item.select(config['locators']['ITEM_LINK']['selector'])[0].text.strip()
+                    link_href = host_url + item.select(config['locators']['ITEM_LINK']['selector'])[0].attrs['href']
+                    price = item.select(config['locators']['ITEM_PRICE']['selector'])[0].text.strip()
+                    customer = item.select(config['locators']['ITEM_CUSTOMER']['selector'])[0].text.strip()
+                    data.append({
+                        'linkText': link_text,
+                        'linkHref': link_href,
+                        'price': price,
+                        'number': number,
+                        'type': type_str,
+                        'customer': customer
+                    })
+                from_count += len(items)
+                time.sleep(2)
+            else:
+                break
+    return data
+
 # Парсинг сайтов
 def parseSite(website, parser_config, fltr, driver, subscription):
     if website == 'fabrikant':
@@ -402,5 +487,3 @@ def parseSite(website, parser_config, fltr, driver, subscription):
         return parseB2bCenter(parser_config, fltr, driver, subscription)
     if website == 'roseltorg':
         return parseRoseltorg(parser_config, fltr, driver, subscription)
-
-

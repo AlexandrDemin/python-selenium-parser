@@ -9,6 +9,7 @@
 
 1. Python 3.6
 1. Selenium
+1. Beautiful Soup 4
 1. Chrome Driver
 1. SMTP Server
 
